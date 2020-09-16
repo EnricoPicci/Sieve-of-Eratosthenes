@@ -1,4 +1,5 @@
-// primeNumbers returns an Observable that notifies all prime numbers up to a certain threshold
+// primeNumbers returns an Observable representing a stream of prime numbers up to a certain threshold
+// Each prime number in the stream is notified to the subscribers of the Observable returned
 // since the logic is recursive it eventually hits max stack size
 // we are using only Observables and rxjs operators
 
@@ -40,8 +41,8 @@ function primeNumbers(upTo: number) {
     );
 }
 
-// xxxx seems the threshold after which we overflow the stack
-const pn = primeNumbers(15000);
+// 15313 seems the threshold after which we overflow the stack, at least with my current configuration
+const pn = primeNumbers(15313);
 
 pn.subscribe({
     next: (n) => console.log(n),
