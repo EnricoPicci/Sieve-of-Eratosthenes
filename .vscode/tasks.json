@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "tsc",
+      "path": "rxjs",
+      "problemMatcher": [],
+      "label": "npm: tsc - rxjs",
+      "detail": "tsc",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}

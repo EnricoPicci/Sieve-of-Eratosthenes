@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Current TS File pwa-node",
+      "type": "pwa-node",
+      "request": "launch",
+      // this allows to launch the program when vscode is opened from within the sieve-of-erastothenes folder
+      "args": ["src/${fileBasename}"],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "sourceMaps": true,
+      // this allows to launch the program when vscode is opened from within the sieve-of-erastothenes folder
+      "cwd": "${workspaceRoot}/rxjs",
+      "skipFiles": ["<node_internals>/**"],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ]
+    }
+  ]
+}
