@@ -3,6 +3,8 @@
 // since the logic is recursive it eventually hits max stack size
 // we are using only Observables and rxjs operators
 
+// Input: a numebr can be passed as input to set the threshold of the prime numbers calculated
+
 import { range, Observable, Subscriber, TeardownLogic } from 'rxjs';
 import { filter, first, share, concatMap } from 'rxjs/operators';
 
@@ -42,7 +44,9 @@ function primeNumbers(upTo: number) {
 }
 
 // 15313 seems the threshold after which we overflow the stack, at least with my current configuration
-const pn = primeNumbers(15313);
+let _upTo: number;
+const upTo = (_upTo = parseInt(process.argv[2])) ? _upTo : 15313;
+const pn = primeNumbers(upTo);
 
 pn.subscribe({
     next: (n) => console.log(n),

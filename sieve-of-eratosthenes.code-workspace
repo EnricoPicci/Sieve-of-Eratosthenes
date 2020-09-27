@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "go"
+    },
+    {
+      "path": "rxjs"
+    }
+  ],
+  "settings": {
+    "go.testFlags": ["-v"]
+  }
+}

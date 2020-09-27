@@ -1,6 +1,6 @@
-// pNumbers returns an Observable that, when subscribed, will print all prime numbers up to a certain threshold
+// primeNumbersObsWithoutNotifications returns an Observable that, when subscribed, will print all prime numbers up to a certain threshold
 // the print of prime numbers is a side effect and not the result of a "next" function defined by a subscriber
-// actually the Observable returned by pNumbers does not notify any value, it just errors at the end
+// actually the Observable returned by primeNumbersObsWithoutNotifications does not notify any value, it just errors at the end
 // because the "first" operator is applied to an Observable that just completes before emitting any value
 
 import { range, Observable } from 'rxjs';
@@ -25,7 +25,7 @@ function primeNumbersObsWithoutNotifications(source: Observable<number>): Observ
 }
 
 primeNumbersObsWithoutNotifications(source).subscribe({
-    next: (d) => console.log('Nottification', d),
+    next: (d) => console.log('Notification', d),
     error: (err) => console.error(err),
     complete: () => console.log('DONE'),
 });
