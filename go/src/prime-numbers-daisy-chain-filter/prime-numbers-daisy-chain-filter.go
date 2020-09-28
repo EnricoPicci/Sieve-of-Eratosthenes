@@ -1,3 +1,9 @@
+// implements the original logic as explained in `https://play.golang.org/p/9U22NfrXeq` or
+// here https://risticnikola.com/sieve-of-eratosthenes-in-go
+//
+// Run it with the command
+// ./prime-numbers-daisy-chain-filter -upTo=100 -printPrime
+
 package main
 
 import (
@@ -26,7 +32,7 @@ func filter(source <-chan int, destination chan<- int, prime int) {
 func Run(upTo int, printPrime bool) {
 	source := make(chan int) // Create a new channel.
 	go generate(source)      // Launch Generate goroutine.
-	for i := 0; i < 1229; i++ {
+	for i := 0; i < upTo; i++ {
 		prime := <-source
 		if printPrime {
 			fmt.Println(i+1, prime)

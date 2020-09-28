@@ -1,5 +1,8 @@
-// the feed of the streams (i.e. writes on channels) passed to the function pNumbers is done concurrently via goroutines
-// the identification of the prime number done by the function pNumbers is done synchronously in the same goroutine as main
+// It has the same logic as "prime-numbers-recursive-1" with the difference that there is no command sent to close
+// the "source" channel and therefore the program terminates with all the channels still open
+//
+// Run it with the command
+// ./prime-numbers-recursive-2 -upTo=100 -printPrime -printCloseChan
 
 package main
 
@@ -41,8 +44,10 @@ func pNumbers(i int, inStream <-chan int, upTo int, printPrime bool) int {
 	}
 
 	filteredStream := make(chan int)
-	go filter(inStream, filteredStream, primeNumber)       // generate a filtered stream out of the inStream
-	return pNumbers(i+1, filteredStream, upTo, printPrime) // pass the filtered stream synchrously and recursively to pNumebrs function
+	// generate a filtered stream out of the inStream
+	go filter(inStream, filteredStream, primeNumber)
+	// pass the filtered stream synchrously and recursively to pNumebrs function
+	return pNumbers(i+1, filteredStream, upTo, printPrime)
 }
 
 func filter(inStream <-chan int, filteredStream chan<- int, prime int) {

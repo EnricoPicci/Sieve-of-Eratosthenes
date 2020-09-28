@@ -1,5 +1,14 @@
+// All calls to pNumbers, which is where the prime number is identified and printed, are synchrnous and run in the same goroutine
 // the feed of the streams (i.e. writes on channels) passed to the function pNumbers is done concurrently via goroutines
-// the identification of the prime number done by the function pNumbers is done synchronously in the same goroutine as main
+//
+// Calculates all prime numbers up to a certain integer specified in the parameter "upTo".
+// So, if the parameter "upTo" is set to 10, the prime numbers calculated are 2, 3, 5, 7
+//
+// Note that the program completes when all the channels (the initial source channel and the following "filteredStream" chanels)
+// are closed, as it is explained here https://medium.com/better-programming/prime-numbers-as-streams-with-rxjs-and-go-a18b0292fb5e
+//
+// Run it with the command
+// ./prime-numbers-recursive -upTo=100 -printPrime -printCloseChan
 
 package main
 
@@ -20,22 +29,23 @@ func main() {
 func Run(upTo int, printPrime bool, printCloseChan bool) {
 	source := make(chan int)
 	go generate(source, upTo)
-	// for the first call to pNumbers the second parameter (i.e. the prime number) is not relevant
-	pNumbers(source, printPrime, printCloseChan)
+	pNumbers(1, source, printPrime, printCloseChan)
+	if printCloseChan {
+		fmt.Println("end of processing")
+	}
 }
 
 func generate(sourceStream chan<- int, upTo int) {
 	for i := 2; i < upTo; i++ {
 		sourceStream <- i
 	}
-	close(sourceStream) // the stream is closed to trigger the closing of all goroutines running the filter function
+	// the stream is closed to trigger the closing of all goroutines running the filter function
+	close(sourceStream)
 }
 
-var i = 0
-
-func pNumbers(inStream <-chan int, printPrime bool, printCloseChan bool) {
-	primeNumber := <-inStream // the first number of the stream is a prime number
-	if primeNumber == 0 {
+func pNumbers(i int, inStream <-chan int, printPrime bool, printCloseChan bool) {
+	primeNumber, more := <-inStream // the first number of the stream is a prime number
+	if !more {
 		return
 	}
 	if printPrime {
@@ -44,8 +54,10 @@ func pNumbers(inStream <-chan int, printPrime bool, printCloseChan bool) {
 	}
 
 	filteredStream := make(chan int)
-	go filter(inStream, filteredStream, primeNumber, printCloseChan) // generate a filtered stream out of the inStream
-	pNumbers(filteredStream, printPrime, printCloseChan)             // pass the filtered stream synchrously and recursively to pNumebrs function
+	// generate a filtered stream out of the inStream
+	go filter(inStream, filteredStream, primeNumber, printCloseChan)
+	// pass the filtered stream synchrously and recursively to pNumebrs function
+	pNumbers(i+1, filteredStream, printPrime, printCloseChan)
 }
 
 func filter(inStream <-chan int, filteredStream chan<- int, prime int, printCloseChan bool) {
@@ -57,6 +69,8 @@ func filter(inStream <-chan int, filteredStream chan<- int, prime int, printClos
 	if printCloseChan {
 		fmt.Printf("Close stream for prime number %v \n", prime)
 	}
-
-	close(filteredStream) // closing this stream triggers the termination of the goroutine running the subsequent filter
+	// closing this stream triggers the termination of the goroutine running the subsequent filter
+	// The filteredStream where all the non-multiple of 3 are written is the inStream used to build
+	// the subsequent stream, i.e. the filteredStream where all the non-multiple of 5 are written
+	close(filteredStream)
 }
